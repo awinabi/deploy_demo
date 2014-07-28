@@ -44,21 +44,20 @@ namespace :deploy do
 
   task :start do
     on roles(:app) do
-      puts "cd #{current_path} && bundle exec unicorn -p 8080 -c #{fetch(:unicorn_config)} -E #{fetch(:rails_env)} -D"
+      execute "cd #{current_path} && source  ~/.rvm/scripts/rvm && bundle exec unicorn -p 8080 -c #{fetch(:unicorn_config)} -E #{fetch(:rails_env)} -D"
     end
   end
 
   task :stop do
     on roles(:app) do
-      run "#{try_sudo} kill `cat #{fetch(:unicorn_pid)}`"
+      execute "kill `cat #{fetch(:unicorn_pid)}`"
     end
   end
 
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
-      # Your restart mechanism here, for example:
-      # execute :touch, release_path.join('tmp/restart.txt')
+      execute "kill -s USR2 `cat #{fetch(:unicorn_pid)}`"
     end
   end
 
