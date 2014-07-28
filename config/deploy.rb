@@ -35,7 +35,7 @@ set :scm, :git
 # set :keep_releases, 5
 set :rails_env, 'production'
 set :port, '8080'
-set :unicorn_pid, "#{current_path}/pids/unicorn.pid"
+set :unicorn_pid, "/var/www/apps/deploy_demo/shared/pids/unicorn.pid"
 set :unicorn_config, "#{current_path}/config/unicorn.rb"
 
 set :keep_releases, 10
@@ -44,13 +44,13 @@ namespace :deploy do
 
   task :start do
     on roles(:app) do
-      run "cd #{current_path} && bundle exec unicorn -p 8080 -c #{unicorn_config} -E #{rails_env} -D"
+      puts "cd #{current_path} && bundle exec unicorn -p 8080 -c #{fetch(:unicorn_config)} -E #{fetch(:rails_env)} -D"
     end
   end
 
   task :stop do
     on roles(:app) do
-      run "#{try_sudo} kill `cat #{unicorn_pid}`"
+      run "#{try_sudo} kill `cat #{fetch(:unicorn_pid)}`"
     end
   end
 
